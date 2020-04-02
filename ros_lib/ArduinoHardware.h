@@ -62,6 +62,12 @@
   #define SERIAL_CLASS HardwareSerial
 #endif
 
+#if defined(ESP32)
+  #define BAUD 500000
+#else
+  #define BAUD 57600
+#endif
+
 class ArduinoHardware {
   public:
     ArduinoHardware(SERIAL_CLASS* io , long baud= 57600){
@@ -70,7 +76,9 @@ class ArduinoHardware {
     }
     ArduinoHardware()
     {
-#if defined(USBCON) and !(defined(USE_USBCON))
+#if defined (ESP32)
+      iostream = &Serial;
+#elif defined(USBCON) and !(defined(USE_USBCON))
       /* Leonardo support */
       iostream = &Serial1;
 #elif defined(USE_TEENSY_HW_SERIAL) or defined(USE_STM32_HW_SERIAL)
@@ -78,7 +86,7 @@ class ArduinoHardware {
 #else
       iostream = &Serial;
 #endif
-      baud_ = 57600;
+      baud_ = BAUD;
     }
     ArduinoHardware(ArduinoHardware& h){
       this->iostream = h.iostream;
